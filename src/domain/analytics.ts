@@ -42,11 +42,12 @@ export function deriveKpis(totals: MarketingTotals): MarketingKpis {
 }
 
 export function compareMetric(metric: MetricKey, current: number, previous: number, stabilityThreshold = 0.02): PeriodChange {
-  const change = previous === 0 ? (current === 0 ? 0 : 1) : (current - previous) / Math.abs(previous);
-  const stable = Math.abs(change) < stabilityThreshold;
-  const direction = stable ? "remained stable" : change > 0 ? "increased" : "decreased";
+  const zeroBaseline = previous === 0;
+  const change = zeroBaseline ? null : (current - previous) / Math.abs(previous);
+  const stable = change === null ? current === 0 : Math.abs(change) < stabilityThreshold;
+  const direction = stable ? "remained stable" : change === null || change > 0 ? "increased" : "decreased";
   const lowerIsBetter = metric === "cpql";
-  const performance = stable || metric === "spend" ? null : (change > 0) !== lowerIsBetter ? "improved" : "weakened";
+  const performance = stable || metric === "spend" ? null : (direction === "increased") !== lowerIsBetter ? "improved" : "weakened";
   const labels: Record<MetricKey, string> = {
     spend: "Marketing spend",
     qualifiedLeads: "Qualified leads",
@@ -54,16 +55,26 @@ export function compareMetric(metric: MetricKey, current: number, previous: numb
     roas: "ROAS",
   };
 
+  let statement: string;
+  if (stable) {
+    statement = `${labels[metric]} remained stable versus the previous period.`;
+  } else if (change === null) {
+    statement = metric === "spend"
+      ? `${labels[metric]} increased from zero versus the previous period.`
+      : `${labels[metric]} increased from zero versus the previous period; measured performance ${performance}.`;
+  } else {
+    const percentage = Math.abs(change * 100).toFixed(1);
+    statement = metric === "spend"
+      ? `${labels[metric]} ${direction} ${percentage}% versus the previous period.`
+      : `${labels[metric]} ${direction} ${percentage}% versus the previous period; measured performance ${performance}.`;
+  }
+
   return {
     metric,
     direction,
     performance,
     percentChange: change,
-    statement: stable
-      ? `${labels[metric]} remained stable versus the previous period.`
-      : metric === "spend"
-        ? `${labels[metric]} ${direction} ${Math.abs(change * 100).toFixed(1)}% versus the previous period.`
-        : `${labels[metric]} ${direction} ${Math.abs(change * 100).toFixed(1)}% versus the previous period; measured performance ${performance}.`,
+    statement,
   };
 }
 

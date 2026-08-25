@@ -92,4 +92,31 @@ describe("period comparisons", () => {
     const changes = buildWhatChanged([row({ spend: 0, revenue: 0 })], [row()]);
     expect(changes.some((change) => change.metric === "roas")).toBe(false);
   });
+
+  it("describes qualified leads increasing from zero without a percentage", () => {
+    const change = compareMetric("qualifiedLeads", 12, 0);
+    expect(change).toMatchObject({ direction: "increased", performance: "improved", percentChange: null });
+    expect(change.statement).toBe("Qualified leads increased from zero versus the previous period; measured performance improved.");
+    expect(change.statement).not.toContain("100.0%");
+  });
+
+  it("describes spend increasing from zero without performance judgement or percentage", () => {
+    const change = compareMetric("spend", 100, 0);
+    expect(change).toMatchObject({ direction: "increased", performance: null, percentChange: null });
+    expect(change.statement).toBe("Marketing spend increased from zero versus the previous period.");
+    expect(change.statement).not.toContain("100.0%");
+  });
+
+  it("describes ROAS increasing from zero without a percentage", () => {
+    const change = compareMetric("roas", 3, 0);
+    expect(change).toMatchObject({ direction: "increased", performance: "improved", percentChange: null });
+    expect(change.statement).toBe("ROAS increased from zero versus the previous period; measured performance improved.");
+    expect(change.statement).not.toContain("100.0%");
+  });
+
+  it("treats a zero-to-zero comparison as stable without fabricating a percentage", () => {
+    const change = compareMetric("qualifiedLeads", 0, 0);
+    expect(change).toMatchObject({ direction: "remained stable", performance: null, percentChange: null });
+    expect(change.statement).toBe("Qualified leads remained stable versus the previous period.");
+  });
 });

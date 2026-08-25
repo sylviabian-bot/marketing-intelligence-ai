@@ -51,6 +51,6 @@ export interface PeriodChange {
   metric: MetricKey;
   direction: "increased" | "decreased" | "remained stable";
   performance: "improved" | "weakened" | null;
-  percentChange: number;
+  percentChange: number | null;
   statement: string;
 }
