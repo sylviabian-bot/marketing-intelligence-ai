@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 const links = [
   ["Intelligence Overview", "/"],
   ["Campaign Intelligence", "/campaigns"],
+  ["Customer Intelligence", "/customer-intelligence"],
   ["Methodology", "/methodology"],
 ];
 
@@ -21,7 +22,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <div className="shell header-inner">
             <Link href="/" className="brand" aria-label="Marketing Intelligence home">
               <span>Marketing Intelligence</span>
-              <small>Analyst workspace · Sprint 01</small>
+              <small>Analyst workspace · Synthetic evidence</small>
             </Link>
             <nav aria-label="Primary navigation">
               {links.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}

@@ -41,9 +41,9 @@ export default function Methodology() {
         <p className="notice">Fewer than eight valid prior weeks, a failed volume guard, an unavailable KPI, or MAD = 0 produces an explicit insufficient-evidence state—not an anomaly and not a fabricated score.</p>
       </section>
       <hr className="rule" />
-      <section><p className="section-label">Future architecture</p><h2>Evidence-grounded AI, later</h2><p className="notice">A future authorised sprint may add a human-reviewable interpretation layer over the deterministic evidence. AI will not replace source metrics, calculate canonical KPIs, or make unsupported causal claims.</p></section>
+      <section><p className="section-label">Qualitative evidence</p><h2>AI classification, deterministic trust boundary</h2><div className="method-grid"><article><h3>Constrained classification</h3><p>The OpenAI Responses API classifies synthetic feedback using a strict theme, sentiment, journey-stage and categorical-confidence schema. Schema compliance constrains shape but does not prove grounding.</p></article><article><h3>Exact evidence verification</h3><p>Every short model-provided excerpt must occur exactly in its source feedback, and every requested ID must return exactly once. A failed batch is rejected in full.</p></article><article><h3>Counts remain deterministic</h3><p>Theme frequencies, sentiment mix, journey-stage mix and period comparisons are calculated in application code from verified classifications only. The model does not generate these numbers.</p></article></div><p className="notice">Categorical model confidence is not a calibrated statistical probability. Customer language may identify a signal worth investigating, but it does not establish campaign causality.</p></section>
       <hr className="rule" />
-      <section><p className="section-label">Data disclosure</p><h2>Fictional by design</h2><p>All campaign names, organisations and 52 weeks of performance observations are synthetic. No real customer, platform account or marketing data is used.</p></section>
+      <section><p className="section-label">Data disclosure</p><h2>Fictional by design</h2><p>All campaign names, organisations, 52 weeks of performance observations and 336 customer-feedback records are synthetic. No real customer, platform account or marketing data is used.</p></section>
     </>
   );
 }

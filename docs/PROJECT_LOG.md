@@ -70,3 +70,29 @@ AI/API capability, anomaly detection, causal interpretation, forecasting, databa
 ### Deliberately deferred
 
 AI/API interpretation, forecasting, causal attribution, machine learning, authentication, databases, persistence, integrations, analytics SDKs, billing, deployment and Sprint 03.
+
+## Sprint 03 — Customer Intelligence
+
+### Product and architecture decisions
+
+- Chose customer-feedback classification as the first genuine AI capability because language classification handles qualitative ambiguity while quantitative truth remains deterministic.
+- Added 336 deterministic synthetic feedback records across five feedback sources and limited each request to 24 server-resolved fixture records. The client supplies IDs only, never prompts or model configuration.
+- Isolated the official OpenAI Responses API behind a server-only provider/service boundary using strict Zod Structured Outputs, `store: false`, configurable `OPENAI_MODEL`, and `gpt-5.6-terra` fallback.
+- Enforced whole-batch verification after schema parsing: requested and returned IDs match exactly once and each short evidence excerpt is an exact source substring. Unverified output is rejected rather than repaired.
+- Theme, sentiment, journey-stage frequencies and recent/prior comparisons consume only verified classifications and run in deterministic domain logic.
+
+### UI and human-review boundary
+
+- Added Customer Intelligence within the existing Editorial Analytics × Executive Intelligence system without a chatbot or decorative AI panel.
+- The page explains the bounded review set, discloses synthetic sources, exposes verified excerpts, keeps source feedback inspectable, and uses safe loading/error states.
+- Categorical model confidence is review context, not a calibrated probability. Customer signals remain explicitly non-causal and cannot update quantitative evidence or connected systems.
+
+### Testing and validation
+
+- Normal tests use deterministic inputs and an injected route handler; they never call OpenAI.
+- Coverage includes schema failures, exact evidence, full ID reconciliation, batch limits, deterministic counts/comparisons, fixture integrity, and sanitised server errors.
+- Live smoke QA passed locally on 25 Aug 2026 using one four-record synthetic batch: a clear negative offer-clarity comment, clear positive event feedback, a mixed/ambiguous comment, and a content-usefulness comment. Structured Output parsed, all four IDs returned exactly once, every evidence excerpt passed exact-source verification, and no causal output was requested or returned. No secret or raw provider response was logged.
+
+### Deliberately deferred
+
+AI recommendations, causal analysis, chatbot, forecasting, RAG, embeddings, Agents SDK, database, authentication, persistence, connected marketing platforms, deployment, and Sprint 04.
