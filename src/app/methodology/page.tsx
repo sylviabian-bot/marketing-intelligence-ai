@@ -10,11 +10,12 @@ export default function Methodology() {
     <>
       <p className="eyebrow">Methodology</p>
       <h1>Quantitative truth before interpretation.</h1>
-      <p className="lede">The current architecture combines deterministic quantitative analysis with source-grounded AI classification of synthetic customer feedback. Metrics and aggregates remain calculated through tested application logic.</p>
+      <p className="lede">The architecture combines deterministic quantitative analysis, source-grounded classification of synthetic feedback and bounded AI interpretation. Metrics and aggregates remain calculated through tested application logic.</p>
+      <p className="section-label">Quantitative foundation</p>
       <div className="method-grid">
         <article><h3>Source observations</h3><p>Weekly spend, delivery, funnel and revenue values are stored as synthetic records. No derived KPI is embedded in the fixture data.</p></article>
         <article><h3>Deterministic engine</h3><p>Aggregation and KPI formulas are isolated from presentation. Zero denominators return no value rather than misleading infinity or fabricated zero; unavailable KPIs are omitted from period-change claims.</p></article>
-        <article><h3>Interpretation boundary</h3><p>Period comparisons describe measured movement without causality. AI classifies qualitative language only; it does not calculate KPIs, explain performance, or generate recommendations.</p></article>
+        <article><h3>Calculation boundary</h3><p>Period comparisons describe measured movement without causality. AI never calculates KPIs, aggregates, trends or anomaly scores.</p></article>
       </div>
       <hr className="rule" />
       <section><p className="section-label">KPI definitions</p><h2>One calculation contract</h2><div className="formula-list">{formulas.map(([name, formula]) => <div key={name}><span>{name}</span><code>{formula}</code></div>)}</div></section>
@@ -45,7 +46,9 @@ export default function Methodology() {
       <hr className="rule" />
       <section><p className="section-label">AI interpretation</p><h2>A bounded brief, not a chatbot</h2><div className="method-grid"><article><h3>Deterministic retrieval</h3><p>Users choose a server-owned question preset. The server selects accepted quantitative evidence and, only where required, qualitative evidence that passed Sprint 03 provenance verification.</p></article><article><h3>Evidence package</h3><p>The model receives a bounded package rather than unrestricted raw data. Every observed claim must cite a supplied evidence ID; citations prove traceability to the package, not universal truth.</p></article><article><h3>Canonical rendering</h3><p>Model narrative cannot contain canonical numbers. Metric values, dates, counts, trends and anomaly baselines are rendered by application code from cited records.</p></article></div><div className="method-grid"><article><h3>Observed versus possible</h3><p>Supported observations and investigation hypotheses are separate structures. Every hypothesis names evidence that is still missing.</p></article><article><h3>Defensive verification</h3><p>Unknown citations, numeric narrative and obvious causal overreach reject the entire response. Partially trusted output is never displayed.</p></article><article><h3>Insufficient evidence is valid</h3><p>The Analyst can return insufficient evidence. The causal-review preset must state that causality is not established by this synthetic evidence.</p></article></div></section>
       <hr className="rule" />
-      <section><p className="section-label">Data disclosure</p><h2>Fictional by design</h2><p>All campaign names, organisations, 52 weeks of performance observations and 336 customer-feedback records are synthetic. No real customer, platform account or marketing data is used.</p></section>
+      <section><p className="section-label">Reliability boundaries</p><h2>Traceable does not mean infallible.</h2><p className="notice">Structured schemas, exact excerpts and evidence citations make outputs reviewable. They do not independently prove that a semantic classification is correct, nor do coexisting signals establish causality.</p></section>
+      <hr className="rule" />
+      <section><p className="section-label">Synthetic data disclosure</p><h2>Fictional by design</h2><p>All campaign names, organisations, 52 weeks of performance observations and 336 customer-feedback records are synthetic. No real customer, platform account or marketing data is used.</p></section>
     </>
   );
 }
