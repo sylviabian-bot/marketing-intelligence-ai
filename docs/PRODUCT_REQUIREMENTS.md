@@ -1,6 +1,6 @@
 # AI Marketing Intelligence Analyst — Product Requirements
 
-Version 0.1 · Sprint 01
+Version 0.2 · Sprint 02
 
 ## Product vision
 
@@ -35,9 +35,20 @@ Fixtures store weekly source observations only: spend, impressions, clicks, lead
 - Focused tests cover all formulas, zero denominators, aggregation, comparisons, and narrative rules.
 - Lint, type checking, tests, production build, and diff integrity pass.
 
+## Sprint 02 — Change and anomaly intelligence
+
+Sprint 02 extends the accepted foundation with two separate deterministic concepts:
+
+- Trend compares the trailing four completed weekly observations with the preceding four using a 5% stability threshold.
+- Anomaly compares a current weekly observation with the previous eight valid observations using rolling median, MAD, and an inclusive absolute robust z-score threshold of 3.5.
+
+Qualified leads and ROAS use higher-is-better trend semantics; CPQL uses lower-is-better; spend remains directional. Volume guards prevent low-evidence observations from becoming anomaly claims. Insufficient history, unavailable metrics, and zero MAD remain explicit unavailable states. Stable evidence records preserve scope, metric, period, baseline and supporting-period provenance for future human-reviewed interpretation.
+
+Sprint 02 acceptance requires useful Overview attention signals, campaign-level investigation, understandable methodology, scenario coverage for gradual trend and isolated anomaly, and no causal or AI claims.
+
 ## Out of scope
 
-AI or external APIs, authentication, databases, persistence, integrations, analytics SDKs, billing, deployment, real customer data, forecasting, anomaly detection, causal attribution, and machine-learning models.
+AI or external APIs, authentication, databases, persistence, integrations, analytics SDKs, billing, deployment, real customer data, forecasting, causal attribution, and machine-learning models.
 
 ## Future direction
 

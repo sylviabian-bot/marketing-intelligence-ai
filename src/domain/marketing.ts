@@ -54,3 +54,47 @@ export interface PeriodChange {
   percentChange: number | null;
   statement: string;
 }
+
+export type TrendDirection = "increasing" | "stable" | "declining";
+export type TrendPerformance = "improved" | "weakened" | "not_applicable" | null;
+export type AnomalyStatus = "anomaly" | "within_expected_range" | "insufficient_history" | "insufficient_variation" | "insufficient_volume" | "unavailable";
+
+export interface TrendResult {
+  metric: MetricKey;
+  status: "available" | "unavailable" | "insufficient_history";
+  direction: TrendDirection | null;
+  performance: TrendPerformance;
+  currentValue: number | null;
+  previousValue: number | null;
+  percentChange: number | null;
+  currentPeriods: string[];
+  previousPeriods: string[];
+}
+
+export interface AnomalyResult {
+  metric: MetricKey;
+  status: AnomalyStatus;
+  score: number | null;
+  currentValue: number | null;
+  baselineMedian: number | null;
+  mad: number | null;
+  supportingPeriods: string[];
+  reason: string;
+}
+
+export interface EvidenceRecord {
+  id: string;
+  scopeType: "campaign";
+  scopeId: string;
+  scopeLabel: string;
+  metric: MetricKey;
+  period: string;
+  trend: TrendResult;
+  anomaly: AnomalyResult;
+  evidenceQuality: "high" | "limited" | "unavailable";
+}
+
+export interface OverviewAttentionItem {
+  record: EvidenceRecord;
+  relatedAnomalyCount: number;
+}
