@@ -1,6 +1,10 @@
 import { aggregateObservations, deriveKpis } from "@/domain/analytics";
 import { CURRENT_PERIOD_END, CURRENT_PERIOD_START, campaigns, observationsBetween } from "@/data/marketing-fixtures";
+import { observations } from "@/data/marketing-fixtures";
+import { buildEvidenceRecord } from "@/domain/intelligence";
+import type { MetricKey } from "@/domain/marketing";
 import { formatCurrency, formatMultiple, formatNumber, formatPercent } from "@/lib/format";
+import { formatMetricValue, metricLabels, signalType, trendStatement } from "@/lib/intelligence-format";
 
 export default async function CampaignIntelligence({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const params = await searchParams;
@@ -10,6 +14,8 @@ export default async function CampaignIntelligence({ searchParams }: { searchPar
   const visible = period.filter((row) => visibleCampaigns.some((campaign) => campaign.id === row.campaignId));
   const totals = aggregateObservations(visible);
   const kpis = deriveKpis(totals);
+  const metrics: MetricKey[] = ["qualifiedLeads", "cpql", "roas", "spend"];
+  const intelligence = visibleCampaigns.flatMap((campaign) => metrics.map((metric) => buildEvidenceRecord(campaign, metric, observations)));
 
   return (
     <>
@@ -35,6 +41,23 @@ export default async function CampaignIntelligence({ searchParams }: { searchPar
           <div><small>Leads</small><strong>{formatNumber(totals.leads)}</strong></div>
           <div><small>Qualified leads</small><strong>{formatNumber(totals.qualifiedLeads)}</strong></div>
           <div><small>Conversions</small><strong>{formatNumber(totals.conversions)}</strong></div>
+        </div>
+      </section>
+
+      <hr className="rule" />
+      <section aria-labelledby="intelligence-heading">
+        <p className="section-label">Recent intelligence</p><h2 id="intelligence-heading">Trend and anomaly evidence</h2>
+        <p className="lede compact">Each trend compares the trailing four completed weeks with the preceding four. Anomaly status uses the current week against eight valid prior observations.</p>
+        <div className="intelligence-table">
+          {intelligence.map((record) => (
+            <article className="intelligence-row" key={record.id}>
+              <div><small>{record.scopeLabel}</small><strong>{metricLabels[record.metric]}</strong></div>
+              <div><small>4-week trend</small><span>{trendStatement(record)}</span></div>
+              <div><small>Current / median</small><span>{formatMetricValue(record.metric, record.currentValue)} / {formatMetricValue(record.metric, record.baselineValue)}</span></div>
+              <div><small>Signal</small><span className={record.anomalyStatus === "anomaly" ? "status anomaly" : "status trend"}>{record.anomalyStatus === "anomaly" ? signalType(record) : record.anomalyStatus.replaceAll("_", " ")}</span></div>
+              <details><summary>Evidence</summary><p>Baseline periods: {record.supportingPeriods.join(", ") || "Insufficient valid history"}</p><p>Evidence ID: {record.id}</p></details>
+            </article>
+          ))}
         </div>
       </section>
 

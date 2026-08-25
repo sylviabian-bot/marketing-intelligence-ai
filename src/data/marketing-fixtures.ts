@@ -28,11 +28,14 @@ export const observations: MarketingObservation[] = Array.from({ length: 52 }, (
     const midYearShift = week >= 26 ? 1 + (campaignIndex - 2) * 0.025 : 1;
     const lateYearQuality = week >= 39 ? 1.06 : 1;
     const eventCadence = campaign.channel === "Events" && week % 8 !== 3 ? 0.35 : 1;
-    const spend = Math.round(profile.spend * seasonality * eventCadence);
+    const gradualMetaEfficiency = campaign.id === "meta-awareness" && week >= 40 ? 1 - Math.min((week - 39) * 0.018, 0.22) : 1;
+    const linkedInImprovement = campaign.id === "linkedin-abm" && week >= 48 ? 1.2 : 1;
+    const isolatedSearchSpend = campaign.id === "search-demand" && week === 51 ? 1.85 : 1;
+    const spend = Math.round(profile.spend * seasonality * eventCadence * isolatedSearchSpend);
     const impressions = Math.round(profile.impressions * seasonality * eventCadence);
     const clicks = Math.round(impressions * profile.ctr * midYearShift);
     const leads = Math.round(clicks * profile.leadRate);
-    const qualifiedLeads = Math.round(leads * profile.qualityRate * lateYearQuality);
+    const qualifiedLeads = Math.round(leads * profile.qualityRate * lateYearQuality * gradualMetaEfficiency * linkedInImprovement);
     const conversions = Math.round(qualifiedLeads * profile.conversionRate);
     const revenue = conversions * profile.value;
 

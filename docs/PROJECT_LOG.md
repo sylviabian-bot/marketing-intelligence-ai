@@ -38,3 +38,33 @@
 ### Deliberately deferred
 
 AI/API capability, anomaly detection, causal interpretation, forecasting, databases, authentication, persistence, integrations, analytics SDKs, deployment, and real data.
+
+## Sprint 02 — Change & Anomaly Intelligence
+
+### Product decisions
+
+- Kept trend and anomaly separate: an eight-week grouped comparison describes direction, while a rolling robust baseline identifies unusual individual observations.
+- Kept spend directional and prevented statistical unusualness from being presented as causal explanation or automatic business importance.
+- Added a restrained attention section and campaign evidence investigation rather than a dense alert dashboard.
+
+### Analytical architecture
+
+- Trend compares trailing four versus preceding four completed weeks with a domain-owned 5% stability threshold and Sprint 01 zero/unavailable semantics.
+- Anomaly uses the previous eight valid same-campaign observations, rolling median, MAD, and `0.6745 × deviation ÷ MAD`; absolute scores of 3.5 or more are flagged.
+- Centralised volume guards: qualified leads require 15 leads and 5 qualified leads; CPQL requires 5 qualified leads; ROAS and spend require at least $500 spend.
+- Insufficient history, insufficient volume, unavailable KPIs and zero MAD return explicit non-anomaly states.
+- Typed evidence records use deterministic IDs and preserve scope, period, metric, baseline, score, direction, quality and supporting periods.
+
+### Synthetic scenarios
+
+- Preserved 260 source observations. Minimal deterministic modifiers create a gradual Meta qualified-lead decline, a late LinkedIn improvement, and one isolated Paid Search spend deviation.
+- Scenario labels describe measured data behaviour only and encode no causal explanation.
+
+### Validation and lessons
+
+- Added focused trend, robust statistics, boundary, guard, provenance, scenario and existing fixture-invariant coverage.
+- Lesson: separating sustained movement from unusual individual points creates clearer investigation without requiring AI or causal inference.
+
+### Deliberately deferred
+
+AI/API interpretation, forecasting, causal attribution, machine learning, authentication, databases, persistence, integrations, analytics SDKs, billing, deployment and Sprint 03.
