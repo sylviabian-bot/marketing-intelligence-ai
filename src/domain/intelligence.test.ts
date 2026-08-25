@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { campaigns, observations } from "../data/marketing-fixtures";
 import type { MarketingObservation, MetricKey } from "./marketing";
 import {
-  ANOMALY_Z_THRESHOLD, analyseTrend, buildEvidenceRecord, detectAnomaly, evidenceId, median,
-  medianAbsoluteDeviation, passesVolumeGuard, robustZScore,
+  ANOMALY_Z_THRESHOLD, analyseTrend, buildCampaignEvidence, buildEvidenceRecord, detectAnomaly, evidenceId, median,
+  medianAbsoluteDeviation, passesVolumeGuard, robustZScore, selectOverviewAttention,
 } from "./intelligence";
 
 function weekly(period: string, spend: number, overrides: Partial<MarketingObservation> = {}): MarketingObservation {
@@ -80,6 +80,19 @@ describe("median and MAD anomaly detection", () => {
     expect(result.supportingPeriods).not.toContain(current.period);
     expect(result.baselineMedian).toBe(1000);
   });
+
+  it("produces identical anomaly evidence from shuffled history", () => {
+    const sorted = series(baselineValues);
+    const shuffled = [sorted[5], sorted[1], sorted[7], sorted[0], sorted[4], sorted[2], sorted[6], sorted[3]];
+    const current = weekly("2026-03-01", 1200);
+    const expected = detectAnomaly("spend", sorted, current);
+    const actual = detectAnomaly("spend", shuffled, current);
+    expect(actual.supportingPeriods).toEqual(expected.supportingPeriods);
+    expect(actual.baselineMedian).toBe(expected.baselineMedian);
+    expect(actual.mad).toBe(expected.mad);
+    expect(actual.score).toBe(expected.score);
+    expect(actual.status).toBe(expected.status);
+  });
 });
 
 describe("volume guards and evidence", () => {
@@ -94,12 +107,52 @@ describe("volume guards and evidence", () => {
     expect(result.score).toBeNull();
   });
 
+  it("keeps an unusually low qualified-lead outcome eligible when upstream lead volume is sufficient", () => {
+    const history = series([8, 9, 10, 10, 10, 11, 12, 10], "qualifiedLeads");
+    const result = detectAnomaly("qualifiedLeads", history, weekly("2026-03-01", 1000, { leads: 40, qualifiedLeads: 2, conversions: 1 }));
+    expect(result.status).toBe("anomaly");
+    expect(result.score).toBeLessThan(-3.5);
+  });
+
+  it("still rejects qualified-lead anomalies with low upstream lead volume", () => {
+    const history = series([8, 9, 10, 10, 10, 11, 12, 10], "qualifiedLeads");
+    expect(detectAnomaly("qualifiedLeads", history, weekly("2026-03-01", 1000, { leads: 8, qualifiedLeads: 2 })).status).toBe("insufficient_volume");
+  });
+
+  it("retains low qualified-lead outcomes in the qualified-lead baseline", () => {
+    const history = series([2, 8, 9, 10, 10, 11, 12, 10], "qualifiedLeads");
+    const result = detectAnomaly("qualifiedLeads", history, weekly("2026-03-01", 1000, { leads: 40, qualifiedLeads: 6 }));
+    expect(result.supportingPeriods).toEqual(history.map((row) => row.period));
+  });
+
+  it("retains the CPQL qualified-lead denominator guard", () => {
+    expect(passesVolumeGuard("cpql", weekly("2026-01-01", 1000, { leads: 40, qualifiedLeads: 2 }))).toBe(false);
+  });
+
   it("creates stable evidence IDs and correct provenance", () => {
     const campaign = campaigns[0];
     const record = buildEvidenceRecord(campaign, "spend", observations);
     expect(record.id).toBe(evidenceId(campaign.id, "spend", record.period));
-    expect(record).toMatchObject({ scopeId: campaign.id, scopeLabel: campaign.name, metric: "spend", baselineType: "rolling_median_8" });
-    expect(record.supportingPeriods).toEqual(observations.filter((row) => row.campaignId === campaign.id && row.period < record.period).slice(-8).map((row) => row.period));
+    expect(record).toMatchObject({ scopeId: campaign.id, scopeLabel: campaign.name, metric: "spend" });
+    expect(record.trend.currentPeriods).toHaveLength(4);
+    expect(record.trend.previousPeriods).toHaveLength(4);
+    expect(record.anomaly.supportingPeriods).toEqual(observations.filter((row) => row.campaignId === campaign.id && row.period < record.period).slice(-8).map((row) => row.period));
+  });
+
+  it("keeps trend and anomaly provenance independently verifiable", () => {
+    const record = buildEvidenceRecord(campaigns[0], "spend", observations);
+    expect(record.trend.currentValue).not.toBe(record.anomaly.currentValue);
+    expect(record.trend.currentPeriods).not.toEqual(record.anomaly.supportingPeriods);
+    expect(record.anomaly.baselineMedian).not.toBe(record.trend.previousValue);
+  });
+
+  it("selects at most one primary anomaly per campaign and retains a weakened non-anomaly trend", () => {
+    const records = buildCampaignEvidence(campaigns, observations);
+    const attention = selectOverviewAttention(records);
+    const anomalyItems = attention.filter((item) => item.record.anomaly.status === "anomaly");
+    expect(new Set(anomalyItems.map((item) => item.record.scopeId)).size).toBe(anomalyItems.length);
+    expect(attention.some((item) => item.record.anomaly.status !== "anomaly" && item.record.trend.performance === "weakened")).toBe(true);
+    expect(attention.some((item) => item.relatedAnomalyCount > 0)).toBe(true);
   });
 });
 
@@ -108,12 +161,12 @@ describe("synthetic scenarios", () => {
     const campaign = campaigns.find((item) => item.id === "meta-awareness")!;
     const rows = observations.filter((row) => row.campaignId === campaign.id);
     expect(analyseTrend("qualifiedLeads", rows).direction).toBe("declining");
-    expect(buildEvidenceRecord(campaign, "qualifiedLeads", observations).anomalyStatus).not.toBe("anomaly");
+    expect(buildEvidenceRecord(campaign, "qualifiedLeads", observations).anomaly.status).not.toBe("anomaly");
   });
 
   it("detects the intended isolated Paid Search spend deviation", () => {
     const campaign = campaigns.find((item) => item.id === "search-demand")!;
-    expect(buildEvidenceRecord(campaign, "spend", observations).anomalyStatus).toBe("anomaly");
+    expect(buildEvidenceRecord(campaign, "spend", observations).anomaly.status).toBe("anomaly");
   });
 
   it("detects the intended LinkedIn improvement trend", () => {

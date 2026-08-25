@@ -53,9 +53,10 @@ export default async function CampaignIntelligence({ searchParams }: { searchPar
             <article className="intelligence-row" key={record.id}>
               <div><small>{record.scopeLabel}</small><strong>{metricLabels[record.metric]}</strong></div>
               <div><small>4-week trend</small><span>{trendStatement(record)}</span></div>
-              <div><small>Current / median</small><span>{formatMetricValue(record.metric, record.currentValue)} / {formatMetricValue(record.metric, record.baselineValue)}</span></div>
-              <div><small>Signal</small><span className={record.anomalyStatus === "anomaly" ? "status anomaly" : "status trend"}>{record.anomalyStatus === "anomaly" ? signalType(record) : record.anomalyStatus.replaceAll("_", " ")}</span></div>
-              <details><summary>Evidence</summary><p>Baseline periods: {record.supportingPeriods.join(", ") || "Insufficient valid history"}</p><p>Evidence ID: {record.id}</p></details>
+              <div><small>Trend · 4 weeks / preceding 4</small><span>{formatMetricValue(record.metric, record.trend.currentValue)} / {formatMetricValue(record.metric, record.trend.previousValue)}</span></div>
+              <div><small>Anomaly · week / prior 8-week median</small><span>{formatMetricValue(record.metric, record.anomaly.currentValue)} / {formatMetricValue(record.metric, record.anomaly.baselineMedian)}</span></div>
+              <div><small>Signal</small><span className={record.anomaly.status === "anomaly" ? "status anomaly" : "status trend"}>{record.anomaly.status === "anomaly" ? signalType(record) : record.anomaly.status.replaceAll("_", " ")}</span></div>
+              <details><summary>Evidence provenance</summary><p>Trend current periods: {record.trend.currentPeriods.join(", ") || "Unavailable"}</p><p>Trend previous periods: {record.trend.previousPeriods.join(", ") || "Unavailable"}</p><p>Anomaly baseline periods: {record.anomaly.supportingPeriods.join(", ") || "Insufficient valid history"}</p><p>Evidence ID: {record.id}</p></details>
             </article>
           ))}
         </div>

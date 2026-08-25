@@ -24,7 +24,7 @@ export default function Methodology() {
         <div className="method-grid">
           <article><h3>Trend · 4 + 4 weeks</h3><p>The trailing four completed weekly observations are compared with the preceding four. Movement below 5% is stable. Qualified leads and ROAS use higher-is-better semantics, CPQL uses lower-is-better, and spend remains directional only.</p></article>
           <article><h3>Anomaly · median + MAD</h3><p>The current week is compared with the previous eight valid observations for the same campaign and metric. A robust z-score at or beyond ±3.5 is flagged. The current point never enters its own baseline.</p></article>
-          <article><h3>Evidence boundaries</h3><p>An unusual observation does not explain causation and is not automatically important. Evidence records retain scope, period, baseline, score, direction and supporting periods for reproducible review.</p></article>
+          <article><h3>Evidence boundaries</h3><p>An unusual observation does not explain causation and is not automatically important. Evidence records keep 4-vs-4 trend provenance separate from current-week vs prior-8 anomaly provenance.</p></article>
         </div>
       </section>
       <hr className="rule" />
@@ -33,7 +33,7 @@ export default function Methodology() {
         <div className="formula-list">
           <div><span>Rolling baseline</span><code>previous 8 valid weeks</code></div>
           <div><span>Robust score</span><code>0.6745 × (current − median) ÷ MAD</code></div>
-          <div><span>Qualified leads</span><code>≥15 leads and ≥5 qualified leads</code></div>
+          <div><span>Qualified leads</span><code>≥15 upstream leads</code></div>
           <div><span>CPQL</span><code>≥5 qualified leads</code></div>
           <div><span>ROAS</span><code>≥$500 positive spend</code></div>
           <div><span>Spend</span><code>≥$500</code></div>

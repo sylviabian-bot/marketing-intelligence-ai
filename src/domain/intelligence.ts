@@ -1,6 +1,6 @@
 import { aggregateObservations, calculateCpql, calculateRoas } from "./analytics";
 import type {
-  AnomalyResult, Campaign, EvidenceRecord, MarketingObservation, MetricKey, TrendPerformance, TrendResult,
+  AnomalyResult, Campaign, EvidenceRecord, MarketingObservation, MetricKey, OverviewAttentionItem, TrendPerformance, TrendResult,
 } from "./marketing";
 
 export const TREND_STABILITY_THRESHOLD = 0.05;
@@ -8,7 +8,7 @@ export const ANOMALY_Z_THRESHOLD = 3.5;
 export const ANOMALY_BASELINE_SIZE = 8;
 
 export const VOLUME_GUARDS = {
-  qualifiedLeads: { minimumLeads: 15, minimumQualifiedLeads: 5 },
+  qualifiedLeads: { minimumLeads: 15 },
   cpql: { minimumQualifiedLeads: 5 },
   roas: { minimumSpend: 500 },
   spend: { minimumSpend: 500 },
@@ -70,7 +70,7 @@ export function analyseTrend(metric: MetricKey, observations: MarketingObservati
 }
 
 export function passesVolumeGuard(metric: MetricKey, observation: MarketingObservation): boolean {
-  if (metric === "qualifiedLeads") return observation.leads >= VOLUME_GUARDS.qualifiedLeads.minimumLeads && observation.qualifiedLeads >= VOLUME_GUARDS.qualifiedLeads.minimumQualifiedLeads;
+  if (metric === "qualifiedLeads") return observation.leads >= VOLUME_GUARDS.qualifiedLeads.minimumLeads;
   if (metric === "cpql") return observation.qualifiedLeads >= VOLUME_GUARDS.cpql.minimumQualifiedLeads;
   if (metric === "roas") return observation.spend >= VOLUME_GUARDS.roas.minimumSpend;
   return observation.spend >= VOLUME_GUARDS.spend.minimumSpend;
@@ -87,6 +87,7 @@ export function detectAnomaly(metric: MetricKey, history: MarketingObservation[]
 
   const valid = history
     .filter((row) => row.period < current.period && passesVolumeGuard(metric, row))
+    .sort((a, b) => a.period.localeCompare(b.period))
     .map((row) => ({ period: row.period, value: weeklyMetricValue(metric, row) }))
     .filter((row): row is { period: string; value: number } => row.value !== null)
     .slice(-ANOMALY_BASELINE_SIZE);
@@ -118,13 +119,29 @@ export function buildEvidenceRecord(campaign: Campaign, metric: MetricKey, obser
   const evidenceQuality = anomaly.status === "anomaly" || anomaly.status === "within_expected_range" ? "high" : anomaly.status === "unavailable" ? "unavailable" : "limited";
   return {
     id: evidenceId(campaign.id, metric, current.period), scopeType: "campaign", scopeId: campaign.id, scopeLabel: campaign.name,
-    metric, period: current.period, currentValue: anomaly.currentValue, baselineType: "rolling_median_8", baselineValue: anomaly.baselineMedian,
-    percentChange: trend.percentChange, direction: trend.direction, performance: trend.performance, anomalyStatus: anomaly.status,
-    anomalyScore: anomaly.score, evidenceQuality, supportingPeriods: anomaly.supportingPeriods,
+    metric, period: current.period, trend, anomaly, evidenceQuality,
   };
 }
 
 export function buildCampaignEvidence(campaigns: Campaign[], observations: MarketingObservation[]): EvidenceRecord[] {
   const metrics: MetricKey[] = ["qualifiedLeads", "cpql", "roas", "spend"];
   return campaigns.flatMap((campaign) => metrics.map((metric) => buildEvidenceRecord(campaign, metric, observations)));
+}
+
+export function selectOverviewAttention(records: EvidenceRecord[], maximumAnomalies = 3): OverviewAttentionItem[] {
+  const anomalies = records.filter((record) => record.anomaly.status === "anomaly");
+  const primaryByScope = new Map<string, EvidenceRecord>();
+  for (const record of anomalies) {
+    if (!primaryByScope.has(record.scopeId)) primaryByScope.set(record.scopeId, record);
+    if (primaryByScope.size === maximumAnomalies) break;
+  }
+  const selected = [...primaryByScope.values()].map((record) => ({
+    record,
+    relatedAnomalyCount: Math.max(0, anomalies.filter((candidate) => candidate.scopeId === record.scopeId).length - 1),
+  }));
+  const selectedScopes = new Set(selected.map((item) => item.record.scopeId));
+  const weakenedTrend = records.find((record) => record.anomaly.status !== "anomaly" && record.trend.performance === "weakened" && !selectedScopes.has(record.scopeId))
+    ?? records.find((record) => record.anomaly.status !== "anomaly" && record.trend.performance === "weakened");
+  if (weakenedTrend) selected.push({ record: weakenedTrend, relatedAnomalyCount: 0 });
+  return selected;
 }

@@ -89,14 +89,12 @@ export interface EvidenceRecord {
   scopeLabel: string;
   metric: MetricKey;
   period: string;
-  currentValue: number | null;
-  baselineType: "preceding_4_weeks" | "rolling_median_8";
-  baselineValue: number | null;
-  percentChange: number | null;
-  direction: TrendDirection | null;
-  performance: TrendPerformance;
-  anomalyStatus: AnomalyStatus;
-  anomalyScore: number | null;
+  trend: TrendResult;
+  anomaly: AnomalyResult;
   evidenceQuality: "high" | "limited" | "unavailable";
-  supportingPeriods: string[];
+}
+
+export interface OverviewAttentionItem {
+  record: EvidenceRecord;
+  relatedAnomalyCount: number;
 }

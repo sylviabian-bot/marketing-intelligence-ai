@@ -2,7 +2,7 @@ import { aggregateObservations, buildWhatChanged, deriveKpis } from "@/domain/an
 import { CHANNELS } from "@/domain/marketing";
 import { CURRENT_PERIOD_END, CURRENT_PERIOD_START, PREVIOUS_PERIOD_END, PREVIOUS_PERIOD_START, observationsBetween } from "@/data/marketing-fixtures";
 import { campaigns, observations } from "@/data/marketing-fixtures";
-import { buildCampaignEvidence } from "@/domain/intelligence";
+import { buildCampaignEvidence, selectOverviewAttention } from "@/domain/intelligence";
 import { formatCurrency, formatMultiple, formatNumber } from "@/lib/format";
 import { formatMetricValue, metricLabels, signalType, trendStatement } from "@/lib/intelligence-format";
 
@@ -17,9 +17,7 @@ const channels = CHANNELS.map((channel) => {
 });
 const maxQualified = Math.max(...channels.map((row) => row.totals.qualifiedLeads));
 const evidence = buildCampaignEvidence(campaigns, observations);
-const anomalySignals = evidence.filter((record) => record.anomalyStatus === "anomaly").slice(0, 3);
-const trendOnlySignal = evidence.find((record) => record.anomalyStatus !== "anomaly" && record.performance === "weakened");
-const attentionSignals = trendOnlySignal ? [...anomalySignals, trendOnlySignal] : anomalySignals;
+const attentionSignals = selectOverviewAttention(evidence);
 
 export default function IntelligenceOverview() {
   return (
@@ -42,12 +40,16 @@ export default function IntelligenceOverview() {
         <h2 id="attention-heading">Evidence worth reviewing</h2>
         <p className="lede compact">Deterministic signals identify measured movement and unusual observations. They do not explain why the change occurred or determine business importance.</p>
         <div className="signal-list">
-          {attentionSignals.map((record) => (
+          {attentionSignals.map(({ record, relatedAnomalyCount }) => (
             <article className="signal-item" key={record.id}>
-              <div className="signal-meta"><span className={record.anomalyStatus === "anomaly" ? "status anomaly" : "status trend"}>{signalType(record)}</span><span>{record.period}</span><span>Evidence · {record.evidenceQuality}</span></div>
+              <div className="signal-meta"><span className={record.anomaly.status === "anomaly" ? "status anomaly" : "status trend"}>{signalType(record)}</span><span>{record.period}</span><span>Evidence · {record.evidenceQuality}</span></div>
               <h3>{record.scopeLabel} · {metricLabels[record.metric]}</h3>
               <p>{trendStatement(record)}</p>
-              <dl className="evidence-line"><div><dt>Current</dt><dd>{formatMetricValue(record.metric, record.currentValue)}</dd></div><div><dt>8-week median</dt><dd>{formatMetricValue(record.metric, record.baselineValue)}</dd></div><div><dt>Robust z-score</dt><dd>{record.anomalyScore === null ? "Unavailable" : record.anomalyScore.toFixed(2)}</dd></div></dl>
+              <div className="evidence-groups">
+                <dl className="evidence-line"><div><dt>Trend · trailing 4 weeks</dt><dd>{formatMetricValue(record.metric, record.trend.currentValue)}</dd></div><div><dt>Trend · preceding 4 weeks</dt><dd>{formatMetricValue(record.metric, record.trend.previousValue)}</dd></div></dl>
+                <dl className="evidence-line"><div><dt>Anomaly · current week</dt><dd>{formatMetricValue(record.metric, record.anomaly.currentValue)}</dd></div><div><dt>Anomaly · prior 8-week median</dt><dd>{formatMetricValue(record.metric, record.anomaly.baselineMedian)}</dd></div><div><dt>Robust z-score</dt><dd>{record.anomaly.score === null ? "Unavailable" : record.anomaly.score.toFixed(2)}</dd></div></dl>
+              </div>
+              {relatedAnomalyCount > 0 && <p className="snapshot">{relatedAnomalyCount} additional related metric {relatedAnomalyCount === 1 ? "anomaly" : "anomalies"} available in Campaign Intelligence.</p>}
               <p className="snapshot">Evidence ID · {record.id}</p>
             </article>
           ))}

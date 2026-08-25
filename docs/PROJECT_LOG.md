@@ -51,9 +51,11 @@ AI/API capability, anomaly detection, causal interpretation, forecasting, databa
 
 - Trend compares trailing four versus preceding four completed weeks with a domain-owned 5% stability threshold and Sprint 01 zero/unavailable semantics.
 - Anomaly uses the previous eight valid same-campaign observations, rolling median, MAD, and `0.6745 × deviation ÷ MAD`; absolute scores of 3.5 or more are flagged.
-- Centralised volume guards: qualified leads require 15 leads and 5 qualified leads; CPQL requires 5 qualified leads; ROAS and spend require at least $500 spend.
+- Centralised volume guards: qualified-lead anomalies require 15 upstream leads without suppressing low outcomes; CPQL separately requires 5 qualified leads; ROAS and spend require at least $500 spend.
 - Insufficient history, insufficient volume, unavailable KPIs and zero MAD return explicit non-anomaly states.
-- Typed evidence records use deterministic IDs and preserve scope, period, metric, baseline, score, direction, quality and supporting periods.
+- Typed evidence records use deterministic IDs and separate complete 4-vs-4 trend provenance from current-week vs prior-8 anomaly provenance.
+- Anomaly history is sorted inside the domain rule before selecting the latest eight valid prior observations, so caller order cannot alter evidence.
+- Overview applies a simple executive selection rule: at most one primary anomaly per campaign, a related-anomaly count, and one weakened non-anomaly trend when available. Detailed metric evidence remains in Campaign Intelligence.
 
 ### Synthetic scenarios
 
