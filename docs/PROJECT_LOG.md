@@ -96,3 +96,36 @@ AI/API interpretation, forecasting, causal attribution, machine learning, authen
 ### Deliberately deferred
 
 AI recommendations, causal analysis, chatbot, forecasting, RAG, embeddings, Agents SDK, database, authentication, persistence, connected marketing platforms, deployment, and Sprint 04.
+
+## Sprint 04 — Evidence-Grounded AI Analyst
+
+### Product decisions
+
+- Added four server-owned question presets instead of free text or conversation history. `campaign_review` alone accepts a known campaign ID.
+- Kept the model as interpreter, never quantitative source of truth. The application owns evidence retrieval, metrics, counts, IDs, provenance, numeric display and final verification.
+- Required causal review to say `not_established`; observed findings and investigation hypotheses remain separate structures.
+
+### Evidence and AI architecture
+
+- Implemented Question → deterministic retrieval → EvidencePackage → Structured Output interpretation → deterministic citation/output verification → canonical evidence rendering.
+- Reused Sprint 02 EvidenceRecords directly. Portfolio selection stays restrained; campaign and Meta scopes are deterministic.
+- `customer_context` alone reruns the accepted bounded Sprint 03 classification workflow, verifies all excerpts, and derives stable feedback and aggregate customer-signal evidence IDs.
+- Added explicit unavailable-evidence metadata for creative, audience, landing-page, experimental, attribution and competitor evidence.
+- Added a server-only Responses API provider with strict Zod output, `store: false`, configurable model and no tools, search, RAG or embeddings.
+
+### Verification boundaries
+
+- Every observed finding must cite supplied evidence; unknown, outside-package or duplicate citations reject the complete response.
+- All model narrative fields reject digits, percent signs and currency symbols. Canonical values are rendered from evidence records.
+- Headline and observed statements reject a conservative list of obvious causal phrases. Hypotheses may propose investigations but must name missing evidence.
+
+### Design and validation
+
+- Added an editorial decision-support page with question controls, assessment, observed evidence, hypotheses, limitations, priorities and an inspectable evidence register—without chat visual language.
+- Normal tests use deterministic fixtures and injected handlers; they never call OpenAI.
+- Live QA passed for all four bounded presets using synthetic data: `portfolio_attention`, `customer_context`, `causality_check`, and a Meta `campaign_review`. Structured Output parsed, citations verified, model prose contained no canonical numeric facts, customer context used verified qualitative evidence, and the causality review returned `not_established`.
+- Browser QA covered the Overview, Campaign Intelligence, Customer Intelligence, AI Analyst, and Methodology on desktop, plus the Overview, Customer Intelligence, and AI Analyst at 390 px. No console errors, overlays, horizontal overflow, chatbot visual language, or rendered secret names were found.
+
+### Deliberately deferred
+
+Generic chat, arbitrary prompts, memory, persistence, database, authentication, RAG, embeddings, search tools, forecasting, causal attribution, action execution, connected platforms, deployment and Sprint 05.
