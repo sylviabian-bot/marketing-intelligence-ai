@@ -23,13 +23,13 @@ The product was built in four layers:
 
 ```text
 Marketing observations → deterministic analytics → trend and anomaly evidence
-Customer feedback → AI classification → deterministic provenance verification
+Synthetic customer feedback → AI classification → deterministic provenance verification → verified qualitative evidence
 Quantitative + verified qualitative evidence → bounded EvidencePackage
 EvidencePackage → AI interpretation → citation/numeric/causal verification
 Verified brief → canonical evidence rendered by application code
 ```
 
-AI handles language interpretation. Application code owns calculations, counts, evidence selection, evidence identifiers, canonical numeric display and final verification.
+AI handles language interpretation and may select a short supporting excerpt during qualitative classification. Application code owns source-record retrieval, Analyst evidence-package retrieval, quantitative evidence selection, calculations, counts, evidence identifiers, provenance verification, canonical numeric display and final verification.
 
 ## Key decisions
 

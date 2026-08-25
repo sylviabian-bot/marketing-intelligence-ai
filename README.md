@@ -1,6 +1,6 @@
 # AI Marketing Intelligence Analyst
 
-An evidence-grounded marketing intelligence prototype that combines deterministic analytics, verified customer feedback and bounded AI interpretation.
+An evidence-grounded marketing intelligence prototype that combines deterministic analytics, verified qualitative evidence and bounded AI interpretation.
 
 ## Why I built it
 
@@ -24,7 +24,7 @@ Verified evidence → bounded EvidencePackage → AI interpretation → determin
 Verified analyst brief → canonical facts rendered by application code
 ```
 
-AI is used for qualitative language classification and concise evidence-linked interpretation. Application code owns KPI calculations, aggregation, evidence selection, evidence IDs, canonical numbers and final verification.
+AI is used for qualitative language classification, selecting short supporting excerpts, and concise evidence-linked interpretation. Application code owns source-record retrieval, Analyst evidence-package retrieval, quantitative evidence selection, KPI calculations, aggregation, evidence IDs, provenance verification, canonical numbers and final verification.
 
 ## Key reliability decisions
 
