@@ -1,6 +1,6 @@
 # AI Marketing Intelligence Analyst — Product Requirements
 
-Version 0.3 · Sprint 03
+Version 0.4 · Sprint 04
 
 ## Product vision
 
@@ -20,6 +20,7 @@ Provide a coherent, deterministic analytical foundation: consistent KPI calculat
 - Campaign Intelligence — channel filtering, funnel, derived KPIs, and campaign comparison.
 - Methodology — source/derived distinction, formula contract, interpretation boundary, and data disclosure.
 - Customer Intelligence — bounded AI classification of synthetic feedback, verified evidence, and deterministic qualitative aggregation.
+- AI Analyst — bounded evidence-grounded interpretation with server-owned questions and canonical evidence rendering.
 
 ## Data and metric contract
 
@@ -53,9 +54,15 @@ Sprint 03 introduces the first genuine AI capability through a narrow workflow: 
 
 AI classifies theme, sentiment, journey stage and categorical model confidence. Application code calculates all frequencies and recent/prior comparisons. Customer signals remain non-causal and cannot modify Sprint 01/02 quantitative truth. Acceptance requires a recruiter-readable Customer Intelligence page, safe failure states, server-only secrets, deterministic tests without live API access, and a small successful live smoke test using synthetic feedback.
 
+## Sprint 04 — Evidence-grounded AI Analyst
+
+Sprint 04 adds four server-owned analyst questions rather than arbitrary chat. The server validates scope, retrieves deterministic Sprint 02 evidence, prepares verified Sprint 03 qualitative evidence for customer-context and causal-review questions, and constructs a bounded EvidencePackage. Meta-scoped questions use only verified Meta feedback records and a campaign-scoped customer signal; insufficient campaign-level samples remain explicit rather than falling back to portfolio counts. The OpenAI Responses API returns strict structured interpretation; application code rejects unknown citations, numeric narrative and obvious causal overreach before rendering.
+
+Observed findings must cite supplied evidence. Hypotheses remain structurally separate and name missing evidence. Causality review must return `not_established`. Canonical metric values, dates, counts, trend provenance and anomaly provenance are rendered from evidence records rather than model prose. Acceptance requires deterministic evaluation cases, normal tests without live calls, four-question live QA, and no chatbot, persistence, RAG or execution capability.
+
 ## Out of scope
 
-Chatbots, AI recommendations or root-cause analysis, authentication, databases, persistence, integrations, analytics SDKs, billing, deployment, real customer data, forecasting, causal attribution, RAG, embeddings, Agents SDK, and machine-learning models.
+Generic chat, arbitrary prompts, conversation history, action recommendations or causal conclusions, authentication, databases, persistence, integrations, billing, deployment, real customer data, forecasting, predictive modelling, RAG, embeddings, vector databases, web/file search, Agents SDK, and action execution.
 
 ## Future direction
 

@@ -11,6 +11,7 @@ const links = [
   ["Intelligence Overview", "/"],
   ["Campaign Intelligence", "/campaigns"],
   ["Customer Intelligence", "/customer-intelligence"],
+  ["AI Analyst", "/analyst"],
   ["Methodology", "/methodology"],
 ];
 
