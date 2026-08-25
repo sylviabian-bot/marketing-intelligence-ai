@@ -56,7 +56,7 @@ AI classifies theme, sentiment, journey stage and categorical model confidence. 
 
 ## Sprint 04 — Evidence-grounded AI Analyst
 
-Sprint 04 adds four server-owned analyst questions rather than arbitrary chat. The server validates scope, retrieves deterministic Sprint 02 evidence, prepares verified Sprint 03 qualitative evidence only when required, and constructs a bounded EvidencePackage. The OpenAI Responses API returns strict structured interpretation; application code rejects unknown citations, numeric narrative and obvious causal overreach before rendering.
+Sprint 04 adds four server-owned analyst questions rather than arbitrary chat. The server validates scope, retrieves deterministic Sprint 02 evidence, prepares verified Sprint 03 qualitative evidence for customer-context and causal-review questions, and constructs a bounded EvidencePackage. Meta-scoped questions use only verified Meta feedback records and a campaign-scoped customer signal; insufficient campaign-level samples remain explicit rather than falling back to portfolio counts. The OpenAI Responses API returns strict structured interpretation; application code rejects unknown citations, numeric narrative and obvious causal overreach before rendering.
 
 Observed findings must cite supplied evidence. Hypotheses remain structurally separate and name missing evidence. Causality review must return `not_established`. Canonical metric values, dates, counts, trend provenance and anomaly provenance are rendered from evidence records rather than model prose. Acceptance requires deterministic evaluation cases, normal tests without live calls, four-question live QA, and no chatbot, persistence, RAG or execution capability.
 

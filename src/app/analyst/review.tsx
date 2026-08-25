@@ -31,7 +31,7 @@ function FeedbackEvidence({ record }: { record: FeedbackEvidenceRecord }) {
   return <details className="analyst-evidence"><summary>{human(record.theme)} · {human(record.sentiment)} feedback</summary><blockquote>“{record.evidenceText}”</blockquote><p>{human(record.source)} · {record.date} · {record.confidence} model confidence</p><code>{record.id}</code></details>;
 }
 function CustomerSignal({ record }: { record: CustomerSignalEvidence }) {
-  return <details className="analyst-evidence"><summary>{human(record.theme)} · deterministic customer signal</summary><p>Recent: {record.recentCount} of {record.recentTotal} · preceding: {record.priorCount} of {record.priorTotal}</p><p>{record.supportingFeedbackEvidenceIds.length} verified excerpts support this bounded signal.</p><code>{record.id}</code></details>;
+  return <details className="analyst-evidence"><summary>{human(record.theme)} · deterministic customer signal</summary>{record.status === "available" ? <p>Recent: {record.recentCount} of {record.recentTotal} · preceding: {record.priorCount} of {record.priorTotal}</p> : <p>Insufficient campaign-scoped feedback for a recent-versus-prior comparison. Portfolio-wide counts were not substituted.</p>}<p>{record.supportingFeedbackEvidenceIds.length} verified excerpts support this bounded signal.</p><code>{record.id}</code></details>;
 }
 
 export default function AnalystReview({ campaigns }: { campaigns: Array<{ id: string; name: string; channel: string }> }) {

@@ -13,7 +13,7 @@ export async function runAnalystReview(
   classificationProvider: FeedbackClassificationProvider = new OpenAIFeedbackClassificationProvider(),
 ) {
   const validated = validateAnalystQuestion(input);
-  const classifications = validated.questionId === "customer_context"
+  const classifications = validated.questionId === "customer_context" || validated.questionId === "causality_check"
     ? await classifyFeedbackIds(customerReviewSet.map((item) => item.id), classificationProvider)
     : undefined;
   const evidencePackage = buildEvidencePackage(validated, classifications);

@@ -103,13 +103,14 @@ AI recommendations, causal analysis, chatbot, forecasting, RAG, embeddings, Agen
 
 - Added four server-owned question presets instead of free text or conversation history. `campaign_review` alone accepts a known campaign ID.
 - Kept the model as interpreter, never quantitative source of truth. The application owns evidence retrieval, metrics, counts, IDs, provenance, numeric display and final verification.
-- Required causal review to say `not_established`; observed findings and investigation hypotheses remain separate structures.
+- Required causal review to return both `causalStatus: not_established` and `assessment: insufficient_evidence`; observed findings and investigation hypotheses remain separate structures.
 
 ### Evidence and AI architecture
 
 - Implemented Question → deterministic retrieval → EvidencePackage → Structured Output interpretation → deterministic citation/output verification → canonical evidence rendering.
 - Reused Sprint 02 EvidenceRecords directly. Portfolio selection stays restrained; campaign and Meta scopes are deterministic.
-- `customer_context` alone reruns the accepted bounded Sprint 03 classification workflow, verifies all excerpts, and derives stable feedback and aggregate customer-signal evidence IDs.
+- `customer_context` and `causality_check` both rerun the accepted bounded Sprint 03 classification workflow, verify all excerpts, and derive stable Meta-scoped feedback and customer-signal evidence IDs. This makes causal review a real trap: measured change and customer language coexist, but causal identification remains unavailable.
+- Meta-scoped customer signals never substitute portfolio-wide counts. When either comparison window is too small, the signal records `insufficient_evidence` while retaining the relevant verified Meta excerpts.
 - Added explicit unavailable-evidence metadata for creative, audience, landing-page, experimental, attribution and competitor evidence.
 - Added a server-only Responses API provider with strict Zod output, `store: false`, configurable model and no tools, search, RAG or embeddings.
 
@@ -124,6 +125,7 @@ AI recommendations, causal analysis, chatbot, forecasting, RAG, embeddings, Agen
 - Added an editorial decision-support page with question controls, assessment, observed evidence, hypotheses, limitations, priorities and an inspectable evidence register—without chat visual language.
 - Normal tests use deterministic fixtures and injected handlers; they never call OpenAI.
 - Live QA passed for all four bounded presets using synthetic data: `portfolio_attention`, `customer_context`, `causality_check`, and a Meta `campaign_review`. Structured Output parsed, citations verified, model prose contained no canonical numeric facts, customer context used verified qualitative evidence, and the causality review returned `not_established`.
+- Review-fix live QA reran `customer_context` and `causality_check` with the campaign-scoped evidence contract. Both received Meta quantitative evidence, six verified Meta feedback records including negative offer-clarity evidence, and an explicit insufficient-sample customer signal. Causal review returned `assessment: insufficient_evidence` with `causalStatus: not_established`; no causal observation passed the guard.
 - Browser QA covered the Overview, Campaign Intelligence, Customer Intelligence, AI Analyst, and Methodology on desktop, plus the Overview, Customer Intelligence, and AI Analyst at 390 px. No console errors, overlays, horizontal overflow, chatbot visual language, or rendered secret names were found.
 
 ### Deliberately deferred

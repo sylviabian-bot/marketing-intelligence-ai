@@ -31,12 +31,14 @@ export interface FeedbackEvidenceRecord {
 export interface CustomerSignalEvidence {
   kind: "customer_signal";
   id: string;
+  status: "available" | "insufficient_evidence";
   theme: string;
   sentiment: string;
   scope: string;
-  recentCount: number;
+  campaignId: string | null;
+  recentCount: number | null;
   recentTotal: number;
-  priorCount: number;
+  priorCount: number | null;
   priorTotal: number;
   supportingFeedbackEvidenceIds: string[];
   evidenceQuality: "bounded_review_set";
@@ -95,17 +97,21 @@ export function validateAnalystQuestion(input: { questionId: string; campaignId?
 
 export function feedbackEvidenceId(feedbackId: string): string { return `EVD-feedback-${feedbackId}`; }
 
-export function buildQualitativeEvidence(batch: VerifiedClassificationBatch): Array<FeedbackEvidenceRecord | CustomerSignalEvidence> {
+export function buildQualitativeEvidence(batch: VerifiedClassificationBatch, campaignId?: string): Array<FeedbackEvidenceRecord | CustomerSignalEvidence> {
   const sourceById = new Map(customerReviewSet.map((item) => [item.id, item]));
-  const feedbackRecords: FeedbackEvidenceRecord[] = batch.classifications.map((classification) => {
+  const scopedClassifications = batch.classifications.filter((classification) => !campaignId || sourceById.get(classification.feedbackId)?.campaignId === campaignId);
+  const feedbackRecords: FeedbackEvidenceRecord[] = scopedClassifications.map((classification) => {
     const source = sourceById.get(classification.feedbackId);
     if (!source) throw new AnalystContractError("ANALYST_VERIFICATION_FAILED", "Verified classification is outside the review set.");
     return { kind: "feedback", id: feedbackEvidenceId(source.id), feedbackId: source.id, campaignId: source.campaignId, date: source.date, source: source.source, theme: classification.theme, sentiment: classification.sentiment, journeyStage: classification.journeyStage, confidence: classification.confidence, evidenceText: classification.evidenceText };
   });
-  const comparison = compareClassificationWindows(batch, customerReviewSet, "2026-08-10", "offer_clarity", "negative");
-  if (comparison.status !== "available") return feedbackRecords;
+  const scopedSource = campaignId ? customerReviewSet.filter((item) => item.campaignId === campaignId) : customerReviewSet;
+  const scopedBatch: VerifiedClassificationBatch = { verified: true, classifications: scopedClassifications };
+  const comparison = compareClassificationWindows(scopedBatch, scopedSource, "2026-08-10", "offer_clarity", "negative");
   const supporting = feedbackRecords.filter((item) => item.theme === "offer_clarity" && item.sentiment === "negative").map((item) => item.id);
-  return [...feedbackRecords, { kind: "customer_signal", id: "EVD-customer-offer_clarity-negative-recent-vs-prior", theme: "offer_clarity", sentiment: "negative", scope: "bounded customer review set", recentCount: comparison.recentCount, recentTotal: comparison.recentTotal, priorCount: comparison.priorCount, priorTotal: comparison.priorTotal, supportingFeedbackEvidenceIds: supporting, evidenceQuality: "bounded_review_set" }];
+  const scopeId = campaignId ?? "portfolio";
+  const scopeLabel = campaignId ? `${campaignId} bounded review set` : "bounded customer review set";
+  return [...feedbackRecords, { kind: "customer_signal", id: `EVD-customer-${scopeId}-offer_clarity-negative-recent-vs-prior`, status: comparison.status, theme: "offer_clarity", sentiment: "negative", scope: scopeLabel, campaignId: campaignId ?? null, recentCount: comparison.status === "available" ? comparison.recentCount : null, recentTotal: comparison.recentTotal, priorCount: comparison.status === "available" ? comparison.priorCount : null, priorTotal: comparison.priorTotal, supportingFeedbackEvidenceIds: supporting, evidenceQuality: "bounded_review_set" }];
 }
 
 export function buildEvidencePackage(input: { questionId: string; campaignId?: string }, classifications?: VerifiedClassificationBatch): EvidencePackage {
@@ -125,10 +131,11 @@ export function buildEvidencePackage(input: { questionId: string; campaignId?: s
     quantitativeEvidence = selectOverviewAttention(all).map((item) => item.record);
     scope = { type: "portfolio", id: "portfolio", label: "Current marketing portfolio" };
   }
-  const qualitativeEvidence = validated.questionId === "customer_context"
-    ? classifications ? buildQualitativeEvidence(classifications) : []
+  const requiresQualitativeEvidence = validated.questionId === "customer_context" || validated.questionId === "causality_check";
+  const qualitativeEvidence = requiresQualitativeEvidence
+    ? classifications ? buildQualitativeEvidence(classifications, "meta-awareness") : []
     : [];
-  if (validated.questionId === "customer_context" && !classifications) throw new AnalystContractError("ANALYST_VERIFICATION_FAILED", "Verified customer classifications are required.");
+  if (requiresQualitativeEvidence && !classifications) throw new AnalystContractError("ANALYST_VERIFICATION_FAILED", "Verified customer classifications are required.");
   const evidenceIds = [...quantitativeEvidence.map((item) => item.id), ...qualitativeEvidence.map((item) => item.id), ...unavailableEvidence.map((item) => item.id)];
   return { questionId: validated.questionId, question: ANALYST_QUESTIONS[validated.questionId], scope, quantitativeEvidence, qualitativeEvidence, dataAvailability: unavailableEvidence, evidenceIds };
 }
@@ -145,6 +152,7 @@ export function verifyAnalystResponse(input: unknown, evidence: EvidencePackage)
   if (narrativeFields(response).some((text) => numericPattern.test(text))) throw new AnalystContractError("ANALYST_VERIFICATION_FAILED", "Model narrative contains canonical numeric content.");
   if ([response.headline, ...response.observations.map((item) => item.statement)].some((text) => causalPattern.test(text))) throw new AnalystContractError("ANALYST_VERIFICATION_FAILED", "Observed narrative contains unsupported causal language.");
   if (evidence.questionId === "causality_check" && response.causalStatus !== "not_established") throw new AnalystContractError("ANALYST_VERIFICATION_FAILED", "Causality is not established by this evidence package.");
+  if (evidence.questionId === "causality_check" && response.assessment !== "insufficient_evidence") throw new AnalystContractError("ANALYST_VERIFICATION_FAILED", "Causal assessment must acknowledge insufficient evidence.");
   if (evidence.questionId !== "causality_check" && response.causalStatus !== "not_applicable") throw new AnalystContractError("ANALYST_VERIFICATION_FAILED", "Causal status is not applicable to this analyst question.");
   const allowed = new Set(evidence.evidenceIds);
   const citations = [...response.observations.flatMap((item) => item.evidenceIds), ...response.investigationHypotheses.flatMap((item) => item.relatedEvidenceIds), ...response.limitations.flatMap((item) => item.evidenceIds), ...response.investigationPriorities.flatMap((item) => item.relatedEvidenceIds)];
