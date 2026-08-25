@@ -134,6 +134,40 @@ button:disabled { cursor: wait; opacity: .65; }
 .analyst-list li { border-top: 1px solid var(--line); padding: 12px 0; }
 .analyst-subhead { margin-top: 34px; }
 .evidence-register { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 36px; }
+.portfolio-strip { display: grid; grid-template-columns: .8fr 1.25fr auto; align-items: center; gap: 28px; border-block: 1px solid var(--line); padding: 16px 0; margin-bottom: 42px; }
+.portfolio-strip > div:first-child { display: grid; }
+.portfolio-strip span, .portfolio-strip p { color: var(--muted); font-size: .78rem; margin: 0; }
+.portfolio-actions, .case-links { display: flex; gap: 18px; }
+.portfolio-actions a, .case-links a { color: var(--navy); font-size: .82rem; font-weight: 700; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+.case-intro, .case-dual { display: grid; grid-template-columns: .75fr 1.25fr; gap: 72px; }
+.case-question { font-family: Georgia, serif; font-size: 1.45rem; color: var(--navy); }
+.case-layers { border-top: 1px solid var(--line); }
+.case-layers article { display: grid; grid-template-columns: 70px .7fr 1.3fr; gap: 24px; padding: 20px 0; border-bottom: 1px solid var(--line); }
+.case-layers span { color: var(--ochre); font-family: Georgia, serif; font-size: 1.35rem; }
+.case-layers h3, .case-layers p { margin: 0; }
+.case-layers p { color: var(--muted); }
+.architecture-flow { display: grid; grid-template-columns: 1fr 180px 1fr; gap: 22px; align-items: center; margin-top: 32px; }
+.flow-source, .flow-output { display: grid; gap: 8px; text-align: center; }
+.flow-source span, .flow-output span, .flow-merge { border: 1px solid var(--line); background: var(--surface); padding: 13px 16px; }
+.flow-source b, .flow-output b { color: var(--muted); font-weight: 400; }
+.flow-merge { color: var(--navy); text-align: center; border-top: 3px solid var(--navy); }
+.flow-output { grid-column: 1 / -1; width: min(560px, 100%); margin: 18px auto 0; }
+.case-list { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
+.case-list li { padding: 13px 0; border-bottom: 1px solid var(--line); }
+.case-list.compact li { padding: 9px 0; }
+.reliability-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 40px; margin: 28px 0; }
+.reliability-list div { display: grid; gap: 4px; padding: 14px 0; border-top: 1px solid var(--line); }
+.reliability-list span { color: var(--muted); }
+.evaluation-case { display: grid; grid-template-columns: repeat(3, 1fr); border-block: 1px solid var(--line); }
+.evaluation-case div { padding: 20px; border-right: 1px solid var(--line); }
+.evaluation-case div:first-child { padding-left: 0; }
+.evaluation-case div:last-child { border-right: 0; }
+.evaluation-case span { color: var(--muted); font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; }
+.evaluation-case p { margin: 8px 0 0; }
+.evaluation-list { list-style: none; padding: 0; margin: 22px 0 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 36px; }
+.evaluation-list li { display: flex; justify-content: space-between; padding: 11px 0; border-top: 1px solid var(--line); }
+.evaluation-list strong { color: var(--sage); font-size: .78rem; text-transform: uppercase; }
+.stack-line { color: var(--navy); font-family: Georgia, serif; font-size: 1.3rem; max-width: 820px; }
 
 @media (max-width: 760px) {
   .shell { width: min(100% - 28px, 1180px); }
@@ -162,4 +196,15 @@ button:disabled { cursor: wait; opacity: .65; }
   .analyst-findings > article, .analyst-columns, .evidence-register { grid-template-columns: 1fr; }
   .analyst-findings > article { gap: 8px; }
   .analyst-evidence dl { grid-template-columns: 1fr; }
+  .portfolio-strip { grid-template-columns: 1fr; gap: 10px; }
+  .portfolio-actions, .case-links { flex-wrap: wrap; }
+  .case-intro, .case-dual, .reliability-list, .evaluation-list { grid-template-columns: 1fr; gap: 28px; }
+  .case-layers article { grid-template-columns: 48px 1fr; gap: 12px; }
+  .case-layers article p { grid-column: 2; }
+  .architecture-flow { grid-template-columns: 1fr; }
+  .flow-merge, .flow-output { grid-column: 1; width: 100%; }
+  .flow-source.reverse { display: flex; flex-direction: column-reverse; }
+  .evaluation-case { grid-template-columns: 1fr; }
+  .evaluation-case div, .evaluation-case div:first-child { border-right: 0; border-bottom: 1px solid var(--line); padding: 16px 0; }
+  .evaluation-case div:last-child { border-bottom: 0; }
 }

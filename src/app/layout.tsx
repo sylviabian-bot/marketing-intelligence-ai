@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "AI Marketing Intelligence Analyst",
-  description: "A synthetic portfolio prototype for deterministic marketing performance analysis.",
+  description: "Evidence-grounded marketing analytics portfolio prototype combining deterministic performance intelligence, verified customer feedback and bounded AI interpretation.",
 };
 
 const links = [
@@ -12,6 +12,7 @@ const links = [
   ["Campaign Intelligence", "/campaigns"],
   ["Customer Intelligence", "/customer-intelligence"],
   ["AI Analyst", "/analyst"],
+  ["Case Study", "/case-study"],
   ["Methodology", "/methodology"],
 ];
 
@@ -22,8 +23,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <header className="site-header">
           <div className="shell header-inner">
             <Link href="/" className="brand" aria-label="Marketing Intelligence home">
-              <span>Marketing Intelligence</span>
-              <small>Analyst workspace · Synthetic evidence</small>
+              <span>AI Marketing Intelligence Analyst</span>
+              <small>Portfolio prototype · Synthetic evidence</small>
             </Link>
             <nav aria-label="Primary navigation">
               {links.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}

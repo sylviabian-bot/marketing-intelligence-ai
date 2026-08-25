@@ -5,8 +5,8 @@ export default function AnalystPage() {
   return <>
     <p className="eyebrow">AI Analyst</p>
     <h1>Evidence-grounded interpretation.</h1>
-    <p className="lede">Choose a bounded analyst question. The server retrieves canonical evidence, AI interprets it, and application code verifies every citation before rendering the underlying facts.</p>
-    <p className="snapshot">Synthetic portfolio demonstration · No arbitrary prompts or conversation history</p>
+    <p className="lede">This is a bounded decision-support brief, not a chatbot. Choose a predefined question; the server retrieves evidence before AI interpretation and verifies every citation before showing a result.</p>
+    <p className="snapshot">Synthetic portfolio demonstration · Numbers come from application logic · Insufficient evidence is a valid result</p>
     <AnalystReview campaigns={campaigns.map(({ id, name, channel }) => ({ id, name, channel }))} />
   </>;
 }

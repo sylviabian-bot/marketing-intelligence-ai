@@ -131,3 +131,27 @@ AI recommendations, causal analysis, chatbot, forecasting, RAG, embeddings, Agen
 ### Deliberately deferred
 
 Generic chat, arbitrary prompts, memory, persistence, database, authentication, RAG, embeddings, search tools, forecasting, causal attribution, action execution, connected platforms, deployment and Sprint 05.
+
+## Sprint 05 — Portfolio Polish & Recruiter Case Study
+
+### Portfolio framing
+
+- Added a recruiter-facing Case Study without replacing the operational product surfaces. The Overview retains immediate performance visibility and adds only a restrained project-context strip.
+- Positioned the prototype as evidence-grounded decision support: AI handles language interpretation, while application code owns quantitative truth, provenance, aggregation and final verification.
+- Made the four-layer progression, AI/non-AI boundary, causal-trap evaluation and explicit limitations scannable in the product and reusable portfolio document.
+
+### Presentation and documentation
+
+- Added `/case-study` using native HTML/CSS in the existing Editorial Analytics × Executive Intelligence system; no diagram or UI dependency was introduced.
+- Clarified AI Analyst copy for non-technical reviewers and regrouped Methodology into quantitative foundation, change intelligence, qualitative evidence, AI interpretation, reliability boundaries and synthetic-data disclosure.
+- Rewrote README around the product problem, architecture, reliability decisions, current surfaces, local setup and limitations. Added `docs/PORTFOLIO_CASE_STUDY.md` for portfolio and interview reuse.
+
+### Quality and readiness
+
+- Declared Node 22 as the supported runtime and added minimal GitHub Actions validation for pull requests and pushes to `main`.
+- CI installs with the frozen pnpm lockfile and runs lint, type checking, deterministic tests, production build and diff checking. It requires no API key and performs no live AI calls or deployment.
+- Security review confirmed `.env.local` remains ignored and untracked, `.env.example` contains placeholders only, API access remains server-side, and no public environment variable exposes an OpenAI key.
+
+### Deliberately unchanged
+
+No new AI capability, analyst question, taxonomy, calculation, evidence rule, persistence, authentication, integration, deployment or production claim was added. Sprint 05 is portfolio framing, presentation polish, CI validation and deployment readiness only.

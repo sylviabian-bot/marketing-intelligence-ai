@@ -5,6 +5,7 @@ import { campaigns, observations } from "@/data/marketing-fixtures";
 import { buildCampaignEvidence, selectOverviewAttention } from "@/domain/intelligence";
 import { formatCurrency, formatMultiple, formatNumber } from "@/lib/format";
 import { formatMetricValue, metricLabels, signalType, trendStatement } from "@/lib/intelligence-format";
+import Link from "next/link";
 
 const current = observationsBetween(CURRENT_PERIOD_START, CURRENT_PERIOD_END);
 const previous = observationsBetween(PREVIOUS_PERIOD_START, PREVIOUS_PERIOD_END);
@@ -22,6 +23,11 @@ const attentionSignals = selectOverviewAttention(evidence);
 export default function IntelligenceOverview() {
   return (
     <>
+      <aside className="portfolio-strip" aria-label="Portfolio project context">
+        <div><strong>AI Marketing Intelligence Analyst</strong><span>Portfolio prototype · Synthetic evidence</span></div>
+        <p>Deterministic analytics + verified qualitative evidence + evidence-grounded AI interpretation.</p>
+        <div className="portfolio-actions"><Link href="/analyst">View AI Analyst</Link><Link href="/case-study">Read Case Study</Link></div>
+      </aside>
       <p className="eyebrow">Intelligence overview</p>
       <h1>Performance signals, without the theatre.</h1>
       <p className="lede">A deterministic view of fictional multi-channel marketing performance, built for decisions rather than dashboard volume.</p>

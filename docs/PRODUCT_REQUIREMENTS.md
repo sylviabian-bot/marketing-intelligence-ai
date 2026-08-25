@@ -1,6 +1,6 @@
 # AI Marketing Intelligence Analyst — Product Requirements
 
-Version 0.4 · Sprint 04
+Version 0.5 · Sprint 05
 
 ## Product vision
 
@@ -21,6 +21,7 @@ Provide a coherent, deterministic analytical foundation: consistent KPI calculat
 - Methodology — source/derived distinction, formula contract, interpretation boundary, and data disclosure.
 - Customer Intelligence — bounded AI classification of synthetic feedback, verified evidence, and deterministic qualitative aggregation.
 - AI Analyst — bounded evidence-grounded interpretation with server-owned questions and canonical evidence rendering.
+- Case Study — recruiter-facing product story, architecture, reliability design, evaluation and limitations.
 
 ## Data and metric contract
 
@@ -33,7 +34,7 @@ Fixtures store weekly source observations only: spend, impressions, clicks, lead
 - Approximately 52 weeks cover Paid Search, Meta, LinkedIn, Email, and Events.
 - Overview presents spend, qualified leads, CPQL, ROAS, channel comparison, and non-causal change statements.
 - Campaign Intelligence supports meaningful filtering and funnel/KPI drill-down.
-- Methodology explains source data, deterministic calculations, causal limits, and future evidence-grounded AI architecture.
+- Methodology explains source data, deterministic calculations, qualitative provenance, bounded AI interpretation and causal limits.
 - Focused tests cover all formulas, zero denominators, aggregation, comparisons, and narrative rules.
 - Lint, type checking, tests, production build, and diff integrity pass.
 
@@ -60,10 +61,16 @@ Sprint 04 adds four server-owned analyst questions rather than arbitrary chat. T
 
 Observed findings must cite supplied evidence. Hypotheses remain structurally separate and name missing evidence. Causality review must return `not_established`. Canonical metric values, dates, counts, trend provenance and anomaly provenance are rendered from evidence records rather than model prose. Acceptance requires deterministic evaluation cases, normal tests without live calls, four-question live QA, and no chatbot, persistence, RAG or execution capability.
 
+## Sprint 05 — Portfolio polish and recruiter case study
+
+Sprint 05 preserves all accepted product behaviour while making the architecture easier to evaluate. The global information architecture adds a recruiter-facing Case Study, the Overview adds restrained portfolio context, Methodology becomes easier to scan, and public documentation leads with the product problem and reliability design rather than sprint history.
+
+The Case Study must explain where AI is and is not used, show the four-layer product progression, make the causal-trap evaluation visible, and disclose limitations. Repository validation runs in GitHub Actions on Node 22 without an API key or live model calls. Sprint 05 adds no new analyst questions, AI capability, persistence, integration or deployment.
+
 ## Out of scope
 
 Generic chat, arbitrary prompts, conversation history, action recommendations or causal conclusions, authentication, databases, persistence, integrations, billing, deployment, real customer data, forecasting, predictive modelling, RAG, embeddings, vector databases, web/file search, Agents SDK, and action execution.
 
 ## Future direction
 
-A later separately authorised sprint may add evidence-grounded, human-reviewable AI interpretation over the deterministic analytical layer. Deterministic metrics remain the source of quantitative truth.
+Any connected data source, persistence, authentication, production deployment or additional AI capability requires separate authorisation. Deterministic metrics remain the source of quantitative truth.
