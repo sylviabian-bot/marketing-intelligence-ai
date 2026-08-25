@@ -1,10 +1,10 @@
 import { aggregateObservations, buildWhatChanged, deriveKpis } from "@/domain/analytics";
 import { CHANNELS } from "@/domain/marketing";
-import { observationsBetween } from "@/data/marketing-fixtures";
+import { CURRENT_PERIOD_END, CURRENT_PERIOD_START, PREVIOUS_PERIOD_END, PREVIOUS_PERIOD_START, observationsBetween } from "@/data/marketing-fixtures";
 import { formatCurrency, formatMultiple, formatNumber } from "@/lib/format";
 
-const current = observationsBetween("2026-10-05", "2027-01-03");
-const previous = observationsBetween("2026-07-06", "2026-10-04");
+const current = observationsBetween(CURRENT_PERIOD_START, CURRENT_PERIOD_END);
+const previous = observationsBetween(PREVIOUS_PERIOD_START, PREVIOUS_PERIOD_END);
 const totals = aggregateObservations(current);
 const kpis = deriveKpis(totals);
 const changes = buildWhatChanged(current, previous);
@@ -20,7 +20,7 @@ export default function IntelligenceOverview() {
       <p className="eyebrow">Intelligence overview</p>
       <h1>Performance signals, without the theatre.</h1>
       <p className="lede">A deterministic view of fictional multi-channel marketing performance, built for decisions rather than dashboard volume.</p>
-      <p className="snapshot">Selected period · 5 Oct 2026 – 3 Jan 2027 · Synthetic data</p>
+      <p className="snapshot">Selected period · 25 May – 23 Aug 2026 · Synthetic data</p>
 
       <dl className="metrics">
         <div className="metric"><dt>Marketing spend</dt><dd>{formatCurrency(totals.spend)}</dd></div>
@@ -37,7 +37,7 @@ export default function IntelligenceOverview() {
           <ul className="change-list">
             {changes.map((change) => (
               <li key={change.metric}>
-                <strong className={change.performance}>{change.performance === "neutral" ? "Stable" : change.performance}</strong>
+                <strong className={change.performance ?? "neutral"}>{change.performance ?? (change.direction === "remained stable" ? "Stable" : change.direction)}</strong>
                 <span>{change.statement}</span>
               </li>
             ))}

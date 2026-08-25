@@ -1,11 +1,11 @@
 import type { Campaign, MarketingObservation } from "@/domain/marketing";
 
 export const campaigns: Campaign[] = [
-  { id: "search-demand", name: "Northstar Demand Capture", channel: "Paid Search", objective: "Capture high-intent solution enquiries", startDate: "2026-01-05", endDate: "2027-01-03" },
-  { id: "meta-awareness", name: "Signal & Story", channel: "Meta", objective: "Build consideration among emerging buyers", startDate: "2026-01-05", endDate: "2027-01-03" },
-  { id: "linkedin-abm", name: "Executive Growth Forum", channel: "LinkedIn", objective: "Generate qualified enterprise conversations", startDate: "2026-01-05", endDate: "2027-01-03" },
-  { id: "email-nurture", name: "Momentum Nurture", channel: "Email", objective: "Progress known prospects toward evaluation", startDate: "2026-01-05", endDate: "2027-01-03" },
-  { id: "event-series", name: "Market Futures Series", channel: "Events", objective: "Create high-quality in-person opportunities", startDate: "2026-01-05", endDate: "2027-01-03" },
+  { id: "search-demand", name: "Northstar Demand Capture", channel: "Paid Search", objective: "Capture high-intent solution enquiries", startDate: "2025-08-25", endDate: "2026-08-23" },
+  { id: "meta-awareness", name: "Signal & Story", channel: "Meta", objective: "Build consideration among emerging buyers", startDate: "2025-08-25", endDate: "2026-08-23" },
+  { id: "linkedin-abm", name: "Executive Growth Forum", channel: "LinkedIn", objective: "Generate qualified enterprise conversations", startDate: "2025-08-25", endDate: "2026-08-23" },
+  { id: "email-nurture", name: "Momentum Nurture", channel: "Email", objective: "Progress known prospects toward evaluation", startDate: "2025-08-25", endDate: "2026-08-23" },
+  { id: "event-series", name: "Market Futures Series", channel: "Events", objective: "Create high-quality in-person opportunities", startDate: "2025-08-25", endDate: "2026-08-23" },
 ];
 
 const profiles = {
@@ -17,7 +17,7 @@ const profiles = {
 } as const;
 
 function isoWeek(index: number): string {
-  const date = new Date(Date.UTC(2026, 0, 5 + index * 7));
+  const date = new Date(Date.UTC(2025, 7, 25 + index * 7));
   return date.toISOString().slice(0, 10);
 }
 
@@ -40,8 +40,12 @@ export const observations: MarketingObservation[] = Array.from({ length: 52 }, (
   }),
 ).flat();
 
-export const currentPeriodStart = "2026-10-05";
-export const previousPeriodStart = "2026-07-06";
+export const DATASET_START = "2025-08-25";
+export const DATASET_END = "2026-08-23";
+export const CURRENT_PERIOD_START = "2026-05-25";
+export const CURRENT_PERIOD_END = "2026-08-23";
+export const PREVIOUS_PERIOD_START = "2026-02-23";
+export const PREVIOUS_PERIOD_END = "2026-05-24";
 
 export function observationsBetween(start: string, end: string): MarketingObservation[] {
   return observations.filter((observation) => observation.period >= start && observation.period <= end);

@@ -50,7 +50,7 @@ export interface MarketingKpis {
 export interface PeriodChange {
   metric: MetricKey;
   direction: "increased" | "decreased" | "remained stable";
-  performance: "improved" | "weakened" | "neutral";
+  performance: "improved" | "weakened" | null;
   percentChange: number;
   statement: string;
 }

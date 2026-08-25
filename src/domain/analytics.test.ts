@@ -55,9 +55,41 @@ describe("period comparisons", () => {
     expect(compareMetric("spend", 101, 100).direction).toBe("remained stable");
   });
 
+  it("describes spend increases without performance judgement", () => {
+    const change = compareMetric("spend", 110, 100);
+    expect(change.direction).toBe("increased");
+    expect(change.performance).toBeNull();
+    expect(change.statement).toBe("Marketing spend increased 10.0% versus the previous period.");
+  });
+
+  it("describes spend decreases without performance judgement", () => {
+    const change = compareMetric("spend", 90, 100);
+    expect(change.direction).toBe("decreased");
+    expect(change.performance).toBeNull();
+    expect(change.statement).toBe("Marketing spend decreased 10.0% versus the previous period.");
+  });
+
   it("builds deterministic, non-causal change statements", () => {
     const changes = buildWhatChanged([row({ qualifiedLeads: 12 })], [row({ qualifiedLeads: 10 })]);
     expect(changes).toHaveLength(4);
     expect(changes.every((change) => !/because|caused|due to/i.test(change.statement))).toBe(true);
+  });
+
+  it("omits unavailable CPQL and ROAS comparisons instead of fabricating zero", () => {
+    const unavailable = row({ spend: 0, qualifiedLeads: 0, revenue: 0 });
+    const changes = buildWhatChanged([unavailable], [unavailable]);
+
+    expect(changes.map((change) => change.metric)).toEqual(["qualifiedLeads", "spend"]);
+    expect(changes.every((change) => !/100\.0%|0\.0%/.test(change.statement))).toBe(true);
+  });
+
+  it("does not compare CPQL when only one period has a valid denominator", () => {
+    const changes = buildWhatChanged([row({ qualifiedLeads: 0 })], [row()]);
+    expect(changes.some((change) => change.metric === "cpql")).toBe(false);
+  });
+
+  it("does not compare ROAS when only one period has valid spend", () => {
+    const changes = buildWhatChanged([row({ spend: 0, revenue: 0 })], [row()]);
+    expect(changes.some((change) => change.metric === "roas")).toBe(false);
   });
 });

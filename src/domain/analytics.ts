@@ -46,7 +46,7 @@ export function compareMetric(metric: MetricKey, current: number, previous: numb
   const stable = Math.abs(change) < stabilityThreshold;
   const direction = stable ? "remained stable" : change > 0 ? "increased" : "decreased";
   const lowerIsBetter = metric === "cpql";
-  const performance = stable ? "neutral" : (change > 0) !== lowerIsBetter ? "improved" : "weakened";
+  const performance = stable || metric === "spend" ? null : (change > 0) !== lowerIsBetter ? "improved" : "weakened";
   const labels: Record<MetricKey, string> = {
     spend: "Marketing spend",
     qualifiedLeads: "Qualified leads",
@@ -61,7 +61,9 @@ export function compareMetric(metric: MetricKey, current: number, previous: numb
     percentChange: change,
     statement: stable
       ? `${labels[metric]} remained stable versus the previous period.`
-      : `${labels[metric]} ${direction} ${Math.abs(change * 100).toFixed(1)}% versus the previous period; measured performance ${performance}.`,
+      : metric === "spend"
+        ? `${labels[metric]} ${direction} ${Math.abs(change * 100).toFixed(1)}% versus the previous period.`
+        : `${labels[metric]} ${direction} ${Math.abs(change * 100).toFixed(1)}% versus the previous period; measured performance ${performance}.`,
   };
 }
 
@@ -71,10 +73,17 @@ export function buildWhatChanged(current: MarketingObservation[], previous: Mark
   const currentKpis = deriveKpis(currentTotals);
   const previousKpis = deriveKpis(previousTotals);
 
-  return [
+  const changes = [
     compareMetric("qualifiedLeads", currentTotals.qualifiedLeads, previousTotals.qualifiedLeads),
-    compareMetric("cpql", currentKpis.cpql ?? 0, previousKpis.cpql ?? 0),
-    compareMetric("roas", currentKpis.roas ?? 0, previousKpis.roas ?? 0),
-    compareMetric("spend", currentTotals.spend, previousTotals.spend),
   ];
+
+  if (currentKpis.cpql !== null && previousKpis.cpql !== null) {
+    changes.push(compareMetric("cpql", currentKpis.cpql, previousKpis.cpql));
+  }
+  if (currentKpis.roas !== null && previousKpis.roas !== null) {
+    changes.push(compareMetric("roas", currentKpis.roas, previousKpis.roas));
+  }
+  changes.push(compareMetric("spend", currentTotals.spend, previousTotals.spend));
+
+  return changes;
 }

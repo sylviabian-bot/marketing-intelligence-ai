@@ -1,11 +1,11 @@
 import { aggregateObservations, deriveKpis } from "@/domain/analytics";
-import { campaigns, observationsBetween } from "@/data/marketing-fixtures";
+import { CURRENT_PERIOD_END, CURRENT_PERIOD_START, campaigns, observationsBetween } from "@/data/marketing-fixtures";
 import { formatCurrency, formatMultiple, formatNumber, formatPercent } from "@/lib/format";
 
 export default async function CampaignIntelligence({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const params = await searchParams;
   const selectedChannel = typeof params.channel === "string" ? params.channel : "All channels";
-  const period = observationsBetween("2026-10-05", "2027-01-03");
+  const period = observationsBetween(CURRENT_PERIOD_START, CURRENT_PERIOD_END);
   const visibleCampaigns = campaigns.filter((campaign) => selectedChannel === "All channels" || campaign.channel === selectedChannel);
   const visible = period.filter((row) => visibleCampaigns.some((campaign) => campaign.id === row.campaignId));
   const totals = aggregateObservations(visible);
@@ -24,7 +24,7 @@ export default async function CampaignIntelligence({ searchParams }: { searchPar
           </select>
         </label>
         <button type="submit">Apply filter</button>
-        <span className="snapshot">5 Oct 2026 – 3 Jan 2027</span>
+        <span className="snapshot">25 May – 23 Aug 2026</span>
       </form>
 
       <section aria-labelledby="funnel-heading">

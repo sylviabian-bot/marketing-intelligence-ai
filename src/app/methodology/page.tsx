@@ -13,7 +13,7 @@ export default function Methodology() {
       <p className="lede">Sprint 01 establishes a transparent analytical foundation. Every displayed KPI is calculated from source observations through deterministic, tested functions.</p>
       <div className="method-grid">
         <article><h3>Source observations</h3><p>Weekly spend, delivery, funnel and revenue values are stored as synthetic records. No derived KPI is embedded in the fixture data.</p></article>
-        <article><h3>Deterministic engine</h3><p>Aggregation and KPI formulas are isolated from presentation. Zero denominators return no value rather than misleading infinity or fabricated zero.</p></article>
+        <article><h3>Deterministic engine</h3><p>Aggregation and KPI formulas are isolated from presentation. Zero denominators return no value rather than misleading infinity or fabricated zero; unavailable KPIs are omitted from period-change claims.</p></article>
         <article><h3>Interpretation boundary</h3><p>Period comparisons state what increased, decreased or remained stable. Sprint 01 intentionally excludes causal interpretation and AI-generated conclusions.</p></article>
       </div>
       <hr className="rule" />

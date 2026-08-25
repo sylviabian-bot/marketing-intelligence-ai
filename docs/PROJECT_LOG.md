@@ -13,7 +13,7 @@
 - Established deterministic source-of-truth boundaries: fixtures contain source observations; KPI functions calculate all derived values.
 - Used non-causal language limited to increased, decreased, remained stable, improved, and weakened.
 - Chose three routes only: Overview, Campaign Intelligence, and Methodology.
-- Used a 13-week current period compared with the preceding 13 weeks for the executive change narrative.
+- Used the completed synthetic reporting year 25 Aug 2025 – 23 Aug 2026, with 25 May – 23 Aug compared against 23 Feb – 24 May 2026.
 
 ### Architecture decisions
 
@@ -31,6 +31,7 @@
 ### Validation and lessons
 
 - Focused tests cover KPI formulas, denominator safety, aggregation, fixture integrity, comparison semantics, and non-causal narrative output.
+- Spend comparisons remain directional rather than evaluative, while unavailable CPQL/ROAS values are omitted instead of fabricated as zero.
 - Final command results are recorded in the Sprint 01 delivery commit/PR summary.
 - Lesson: analytical credibility starts with an explicit metric contract and provenance boundary, not a more elaborate dashboard.
 
