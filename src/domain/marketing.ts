@@ -98,3 +98,14 @@ export interface OverviewAttentionItem {
   record: EvidenceRecord;
   relatedAnomalyCount: number;
 }
+
+export const FEEDBACK_SOURCES = ["campaign_survey", "event_feedback", "enquiry", "follow_up_survey", "website_feedback"] as const;
+export type FeedbackSource = (typeof FEEDBACK_SOURCES)[number];
+
+export interface CustomerFeedback {
+  id: string;
+  date: string;
+  source: FeedbackSource;
+  campaignId: string;
+  text: string;
+}

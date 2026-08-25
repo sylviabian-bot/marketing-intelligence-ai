@@ -1,6 +1,6 @@
 # AI Marketing Intelligence Analyst — Product Requirements
 
-Version 0.2 · Sprint 02
+Version 0.3 · Sprint 03
 
 ## Product vision
 
@@ -19,6 +19,7 @@ Provide a coherent, deterministic analytical foundation: consistent KPI calculat
 - Intelligence Overview — executive portfolio performance and deterministic change summary.
 - Campaign Intelligence — channel filtering, funnel, derived KPIs, and campaign comparison.
 - Methodology — source/derived distinction, formula contract, interpretation boundary, and data disclosure.
+- Customer Intelligence — bounded AI classification of synthetic feedback, verified evidence, and deterministic qualitative aggregation.
 
 ## Data and metric contract
 
@@ -46,9 +47,15 @@ Qualified leads and ROAS use higher-is-better trend semantics; CPQL uses lower-i
 
 Sprint 02 acceptance requires useful Overview attention signals, campaign-level investigation, understandable methodology, scenario coverage for gradual trend and isolated anomaly, and no causal or AI claims.
 
+## Sprint 03 — Customer intelligence
+
+Sprint 03 introduces the first genuine AI capability through a narrow workflow: synthetic customer feedback → OpenAI structured classification → deterministic evidence verification → verified classifications → deterministic aggregation. A maximum of 24 server-resolved fixture records enters one request. Every requested ID must return exactly once and every evidence excerpt must be an exact source substring; otherwise the entire batch is rejected.
+
+AI classifies theme, sentiment, journey stage and categorical model confidence. Application code calculates all frequencies and recent/prior comparisons. Customer signals remain non-causal and cannot modify Sprint 01/02 quantitative truth. Acceptance requires a recruiter-readable Customer Intelligence page, safe failure states, server-only secrets, deterministic tests without live API access, and a small successful live smoke test using synthetic feedback.
+
 ## Out of scope
 
-AI or external APIs, authentication, databases, persistence, integrations, analytics SDKs, billing, deployment, real customer data, forecasting, causal attribution, and machine-learning models.
+Chatbots, AI recommendations or root-cause analysis, authentication, databases, persistence, integrations, analytics SDKs, billing, deployment, real customer data, forecasting, causal attribution, RAG, embeddings, Agents SDK, and machine-learning models.
 
 ## Future direction
 
